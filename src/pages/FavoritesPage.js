@@ -2,51 +2,73 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 
-function FavoritesPage({ favorites, toggleFavorite }) {
+function FavoritesPage() {
   const [favoritePokemonData, setFavoritePokemonData] = useState([]);
+  const [error, setError] = useState("");
 
-  // Fetch detailed data for each favorite Pokémon
+  // Fetch the user's favorite Pokémon from the back-end
   useEffect(() => {
-    const fetchFavoriteData = async () => {
-      const fetchData = await Promise.all(
-        favorites.map(async (pokemon) => {
-          const response = await axios.get(`https://pokeapi.co/api/v2/pokemon/${pokemon.name}`);
-          return {
-            name: pokemon.name,
-            sprite: response.data.sprites.front_default,
-          };
-        })
-      );
-      setFavoritePokemonData(fetchData);
+    const fetchFavoritePokemon = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/favorites", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`, // Send JWT for authentication
+          },
+        });
+        setFavoritePokemonData(response.data.favorites); // Assuming back-end returns a list of Pokémon names
+      } catch (err) {
+        setError("Failed to load favorite Pokémon. Please try again.");
+        console.error(err);
+      }
     };
 
-    if (favorites.length > 0) {
-      fetchFavoriteData();
+    fetchFavoritePokemon();
+  }, []);
+
+  // Remove a Pokémon from favorites
+  const removeFavorite = async (name) => {
+    try {
+      await axios.delete(`http://localhost:5000/api/favorites/${name}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`, // Send JWT for authentication
+        },
+      });
+      setFavoritePokemonData((prevData) =>
+        prevData.filter((pokemon) => pokemon.name !== name)
+      );
+    } catch (err) {
+      setError("Failed to remove Pokémon. Please try again.");
+      console.error(err);
     }
-  }, [favorites]);
+  };
 
   return (
     <div className="container mt-4">
       <h1 className="mb-4">Your Favorite Pokémon</h1>
-      {favorites.length > 0 ? (
+      {error && <div className="alert alert-danger">{error}</div>}
+      {favoritePokemonData.length > 0 ? (
         <ul className="list-group">
           {favoritePokemonData.map((pokemonData, idx) => (
-            <li key={idx} className="list-group-item d-flex justify-content-between align-items-center">
-              {/* Display Pokémon sprite */}
+            <li
+              key={idx}
+              className="list-group-item d-flex justify-content-between align-items-center"
+            >
               <img
-                src={pokemonData.sprite}
+                src={pokemonData.sprite} // Assuming sprite URLs are returned by the back-end
                 alt={pokemonData.name}
                 className="img-fluid"
                 style={{ width: "50px", height: "50px", marginRight: "10px" }}
               />
-              <Link to={`/pokemon/${pokemonData.name}`} className="text-capitalize">
+              <Link
+                to={`/pokemon/${pokemonData.name}`}
+                className="text-capitalize"
+              >
                 {pokemonData.name}
               </Link>
 
-              {/* Remove from Favorites button */}
               <button
                 className="btn btn-outline-danger"
-                onClick={() => toggleFavorite({ name: pokemonData.name })} // Calls toggleFavorite to remove from favorites
+                onClick={() => removeFavorite(pokemonData.name)}
               >
                 Remove
               </button>

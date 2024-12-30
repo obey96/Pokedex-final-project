@@ -1,18 +1,64 @@
+// import React from "react";
+// import { Link } from "react-router-dom";
+
+// function Navbar({ favoritesCount }) {
+//   return (
+//     <nav className="navbar navbar-expand-lg navbar-light bg-light">
+//       <div className="container">
+//         <Link className="navbar-brand" to="/">
+//           Pokédex
+//         </Link>
+//         <div className="d-flex justify-content-end">
+//           {/* Favorite button with count */}
+//           <Link to="/favorites" className="btn btn-outline-danger">
+//             Favorites ({favoritesCount})
+//           </Link>
+//         </div>
+//       </div>
+//     </nav>
+//   );
+// }
+
 import React from "react";
 import { Link } from "react-router-dom";
 
-function Navbar({ favoritesCount }) {
+function Navbar({ user, onLogout }) {
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
       <div className="container">
         <Link className="navbar-brand" to="/">
-          Pokédex
+          Pokedex App
         </Link>
-        <div className="d-flex justify-content-end">
-          {/* Favorite button with count */}
-          <Link to="/favorites" className="btn btn-outline-danger">
-            Favorites ({favoritesCount})
-          </Link>
+        <div className="collapse navbar-collapse">
+          <ul className="navbar-nav ms-auto">
+            {user ? (
+              <>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/favorites">
+                    Favorites
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <button className="btn btn-outline-danger" onClick={onLogout}>
+                    Logout
+                  </button>
+                </li>
+              </>
+            ) : (
+              <>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/login">
+                    Login
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/signup">
+                    Signup
+                  </Link>
+                </li>
+              </>
+            )}
+          </ul>
         </div>
       </div>
     </nav>
