@@ -10,12 +10,12 @@ function FavoritesPage() {
   useEffect(() => {
     const fetchFavoritePokemon = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/favorites", {
+        const response = await axios.get("http://localhost:5000/getFavorites", {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`, // Send JWT for authentication
+            Authorization: `Bearer ${localStorage.getItem("token")}`, 
           },
         });
-        setFavoritePokemonData(response.data.favorites); // Assuming back-end returns a list of Pokémon names
+        setFavoritePokemonData(response.data.favorites); 
       } catch (err) {
         setError("Failed to load favorite Pokémon. Please try again.");
         console.error(err);
@@ -25,16 +25,16 @@ function FavoritesPage() {
     fetchFavoritePokemon();
   }, []);
 
-  // Remove a Pokémon from favorites
+  
   const removeFavorite = async (name) => {
     try {
-      await axios.delete(`http://localhost:5000/api/favorites/${name}`, {
+      await axios.delete(`http://localhost:5000/favorites/${name}`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`, // Send JWT for authentication
+          Authorization: `Bearer ${localStorage.getItem("token")}`, 
         },
       });
       setFavoritePokemonData((prevData) =>
-        prevData.filter((pokemon) => pokemon.name !== name)
+        prevData.filter((pokemon) => pokemon.pokemon_name !== name)
       );
     } catch (err) {
       setError("Failed to remove Pokémon. Please try again.");
@@ -54,21 +54,21 @@ function FavoritesPage() {
               className="list-group-item d-flex justify-content-between align-items-center"
             >
               <img
-                src={pokemonData.sprite} // Assuming sprite URLs are returned by the back-end
-                alt={pokemonData.name}
+                src={pokemonData.pokemon_sprite_url} // Assuming sprite URLs are returned by the back-end
+                alt={pokemonData.pokemon_name}
                 className="img-fluid"
                 style={{ width: "50px", height: "50px", marginRight: "10px" }}
               />
               <Link
-                to={`/pokemon/${pokemonData.name}`}
+                to={`/pokemon/${pokemonData.pokemon_name}`}
                 className="text-capitalize"
               >
-                {pokemonData.name}
+                {pokemonData.pokemon_name}
               </Link>
 
               <button
                 className="btn btn-outline-danger"
-                onClick={() => removeFavorite(pokemonData.name)}
+                onClick={() => removeFavorite(pokemonData.pokemon_name)}
               >
                 Remove
               </button>

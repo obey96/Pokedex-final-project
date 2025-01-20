@@ -2,36 +2,47 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 
-function Login({ setUser }) {
+function Login({setUser}) {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  // Handle input changes
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Handle form submission
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
     try {
-      // Send login request to Flask back-end
-      const response = await axios.post("http://localhost:5000/api/login", formData);
+      
+      const response = await axios.post("http://localhost:5000/login", formData);
 
-      // Extract token and user data from the response
-      const { token, user } = response.data;
+      if (response.status === 200) { 
+       
+        const token = response.data.token;
+        const user = response.data.user;
 
-      // Save token to localStorage (for persistence)
-      localStorage.setItem("token", token);
+        localStorage.setItem('user', JSON.stringify(user))
+        localStorage.setItem('token', token)
 
-      // Update user state
-      setUser(user);
+        setUser(user);
 
-      // Redirect to the homepage
-      navigate("/");
+        
+        navigate("/");
+      }
+      else if (response.status === 401) {
+        
+      } 
+      
+     
+
+
+      
+      
     } catch (err) {
       setError(err.response?.data?.message || "Login failed. Please try again.");
     }

@@ -1,48 +1,53 @@
 import React, { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom"; // Import Link for navigation
+import { useParams, Link } from "react-router-dom"; 
 import axios from "axios";
 
-function PokemonDetail({ toggleFavorite, favorites }) {
+function PokemonDetail() {
   const { name } = useParams();
   const [pokemon, setPokemon] = useState(null);
-  const [species, setSpecies] = useState(null);  // State for Pokémon species info
-  const [description, setDescription] = useState("");  // State for Pokémon description
-  const [evolutionChain, setEvolutionChain] = useState(null);  // State for Evolution Chain
+  const [species, setSpecies] = useState(null);  
+  const [description, setDescription] = useState("");  
+  const [evolutionChain, setEvolutionChain] = useState(null);  
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isFavorite, setIsFavorite] = useState(false); // Favorite state
+  const [isFavorite, setIsFavorite] = useState(false); 
 
   useEffect(() => {
     async function fetchPokemonDetails() {
       try {
-        // Fetch Pokémon details
+        
         const response = await axios.get(`https://pokeapi.co/api/v2/pokemon/${name}`);
         setPokemon(response.data);
 
-        // Fetch Pokémon species details
+        
         const speciesResponse = await axios.get(response.data.species.url);
         setSpecies(speciesResponse.data);
 
-        // Get the Pokémon description (cleaned)
+        
         const descriptionEntry = speciesResponse.data.flavor_text_entries.find(
           entry => entry.language.name === "en"
         );
         const cleanedDescription = descriptionEntry
-          ? descriptionEntry.flavor_text.replace(/\f/g, "")  // Clean form feed characters
+          ? descriptionEntry.flavor_text.replace(/\f/g, "")  
           : "No description available.";
         setDescription(cleanedDescription);
 
-        // Fetch the Pokémon evolution chain
+        
         const evolutionResponse = await axios.get(speciesResponse.data.evolution_chain.url);
         setEvolutionChain(evolutionResponse.data);
 
-        // Check if the Pokémon is already in favorites (from localStorage)
-        const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
-        if (favorites.some(fav => fav.name === name)) {
-          setIsFavorite(true);
-        }
+         
+          const responseFavorites = await axios.get("http://localhost:5000/getFavorites", {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`, 
+            },
+          });
+          const favorites = responseFavorites.data.favorites
+          if (favorites.some(fav => fav.pokemon_name === name.toLowerCase())) {
+            setIsFavorite(true);
+          }
+        
       } catch (error) {
-        console.error("Error fetching Pokémon details:", error);
         setError("Failed to load Pokémon details. Please try again.");
       } finally {
         setLoading(false);
@@ -51,10 +56,32 @@ function PokemonDetail({ toggleFavorite, favorites }) {
     fetchPokemonDetails();
   }, [name]);
 
-  const toggleFavoriteStatus = () => {
-    // Toggle favorite status and update UI
-    toggleFavorite(pokemon);
-    setIsFavorite(!isFavorite);  // Toggle the isFavorite state
+  const toggleFavoriteStatus = async() => {
+    try {
+
+
+      const user = JSON.parse(localStorage.getItem('user'));
+      const userId = user.id
+      const pokemonName = pokemon.name
+      const data = {user_id: userId, pokemon_name: pokemonName,pokemon_sprite_url:pokemon.sprites?.front_default};
+
+      const response = await axios.post("http://localhost:5000/favorites", data);
+
+      if (response.status === 201) {
+        setIsFavorite(!isFavorite); 
+
+      }
+      else if (response.status === 401) {
+
+      }
+
+    } catch(err) {
+    console.error('error trying using toggle', err.message);
+    
+      
+    }
+
+    
   };
 
   if (loading) return <div className="text-center mt-5">Loading...</div>;
