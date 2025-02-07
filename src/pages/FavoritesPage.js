@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { API_URL } from "../Constants";
 
 function FavoritesPage() {
   const [favoritePokemonData, setFavoritePokemonData] = useState([]);
@@ -10,7 +11,7 @@ function FavoritesPage() {
   useEffect(() => {
     const fetchFavoritePokemon = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/getFavorites", {
+        const response = await axios.get(`${API_URL}/getFavorites`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`, 
           },
@@ -28,7 +29,7 @@ function FavoritesPage() {
   
   const removeFavorite = async (name) => {
     try {
-      await axios.delete(`http://localhost:5000/favorites/${name}`, {
+      await axios.delete(`${API_URL}/favorites/${name}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`, 
         },
@@ -72,14 +73,28 @@ function FavoritesPage() {
               >
                 Remove
               </button>
+            
             </li>
           ))}
         </ul>
       ) : (
         <div className="text-center mt-4">You have no favorite Pokémon.</div>
+        
       )}
+       <Link
+        to="/"
+        className="btn btn-secondary"
+        style={{
+          position: "fixed",
+          bottom: "20px",
+          right: "20px",
+        }}
+      >
+        Back to Pokédex
+      </Link>
     </div>
   );
 }
+
 
 export default FavoritesPage;

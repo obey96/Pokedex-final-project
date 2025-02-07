@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom"; 
 import axios from "axios";
+import { API_URL } from "../Constants";
 
 function PokemonDetail() {
   const { name } = useParams();
@@ -37,7 +38,7 @@ function PokemonDetail() {
         setEvolutionChain(evolutionResponse.data);
 
          
-          const responseFavorites = await axios.get("http://localhost:5000/getFavorites", {
+          const responseFavorites = await axios.get(`${API_URL}/getFavorites`, {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`, 
             },
@@ -65,7 +66,8 @@ function PokemonDetail() {
       const pokemonName = pokemon.name
       const data = {user_id: userId, pokemon_name: pokemonName,pokemon_sprite_url:pokemon.sprites?.front_default};
 
-      const response = await axios.post("http://localhost:5000/favorites", data);
+      // hard code enviroment variables
+      const response = await axios.post(`${API_URL}/favorites`, data);
 
       if (response.status === 201) {
         setIsFavorite(!isFavorite); 
