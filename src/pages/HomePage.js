@@ -19,7 +19,7 @@ function HomePage() {
     if (!user) {
       navigate("/login");
     } 
-  }, []);
+  }, [navigate]);
 
  
   useEffect(() => {
