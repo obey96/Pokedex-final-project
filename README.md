@@ -1,41 +1,64 @@
 # Pokedex-App
 
+#https://67a99b12e493bd497db30082--pokedex-app-project-96.netlify.app
+
+#Description
+This project is a web application that provides the ability to learn about pokemon, and pokemon stats.
+It allows users to create an account and log in with their credentials to save favorite privately.
+The backend API is custom-built using Python and serves as the core of the application, managing user interactions and data storage.
+
+
+
 ## This website purpose is to learn about pokemon and pokemon stats
 
 ## Features
-1- Search multiple pokemon and stats
-2- Creation of username to save favorites
-3- Information about every single pokemon
+-User Authentication: Secure registration and login system to personalize user experience.
+-Data Management: Users can create, update, and delete [items, expenses, tasks, etc.]
+-API: The backend API handles requests efficiently and securely.
 
-## Prerequisites 
-Ensure you have the following installed:
--Node.js / Python / axios / react
-
-npm install  # For Node.js projects
-pip install -r requirements.txt  # For Python projects
-
-### Steps
-
-The user visits https://67a99b12e493bd497db30082--pokedex-app-project-96.netlify.app/
-- Landing on the homepage
-User will see a homepage
-User will need create a account on sign in
-User will need to log in using the user they create
--Searching for a pokemon
-User can type on the search bar to start searching for pokemon
-User can click on the pokemon they search to find information about the pokemon
--Adding Pokemon to favorites
-Logged-in users can click "Add to Favorites."
-The Pokémon is saved to their profile.
-They can access their "Favorites" list from the navbar.
--Logging out
-The user clicks "Logout" in the navbar.
-They are redirected to the homepage as a guest user.
+# Running Tests
+Test are located in the pages/ directory. To run tests, execute:
+npm test
+Make sure you have jest installed:
+pip install jest
 
 
-### API
-API use is https://pokeapi.co/
-"API used to request information about pokemon"
+## User Flow 
+1. Sign Up/Login: Users create an account or log in.
+2. Dashboard: Users access a personalized dashboard.
+3. Perform Action: Add and delete from favorite
+4. View Insights: Users analyze pokemon data using reports or visualizations.
+5. Logout: Securely end the session.
+
+The API is built with Flask/FastAPI and serves as the backend for the application. The API supports:
+
+# API Documentation
+- GET /items - Fetch all items.
+- POST /items - Create a new item.
+- PUT /items/{id} - Update an item.
+- DELETE /items/{id} - Delete an item.
+
+# Technology Stack
+- Backned: Python, Flask
+- Database: PostgreSQL/MySQL
+- Frontend: React.js
+- Testing: Jest
+- Deployment: Fly.io, netlify
+
+# Additional Notes
+- Ensure you have all dependencies installed before running the project.
+- The project follows best practices for code organization and API security
+
+# Getting Started
+1. Clone the repository: git clone https://github.com/obey96/Pokedex-final-project
+2. Navigate to the project: cd pokedex-app
+3. Install dependencies: pip install -r requirements.txt
+4. Run the application: flask run
+5. Run the fronend: npm start
+
+
+
+
 
 
 
